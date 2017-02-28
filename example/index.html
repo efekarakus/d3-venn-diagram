@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+  g.A circle {
+    fill: brown;
+    fill-opacity: .5;
+    stroke: black;
+  }
+
+  g.B circle {
+    fill: steelblue;
+    fill-opacity: .5;
+    stroke: black;
+  }
+</style>
+<body>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="../venn-diagram.js"></script>
+<script>
+  var vennDiagram = VennDiagram(15, 5, 1.5)
+                  .width(500)
+                  .height(250)
+                  .margin({top: 5, right: 10, bottom: 5, left: 10})
+                  .threshold(10);
+
+  d3.select("body")
+    .call(vennDiagram);
+</script>
+
+</body>
