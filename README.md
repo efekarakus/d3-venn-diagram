@@ -8,8 +8,7 @@ Draw a Venn Diagram given the cardinality |A|, |B|, and |AnB|.
 var vennDiagram = VennDiagram(15, 4, 1)
               .width(500)
               .height(250)
-              .margin({top: 5, right: 10, bottom: 5, left: 10})
-              .threshold(10);
+              .margin({top: 5, right: 10, bottom: 5, left: 10});
 
 d3.select("body")
   .call(vennDiagram);
@@ -31,5 +30,5 @@ If specified, <i>height</i> is the new height for the SVG. Otherwise, returns cu
 
 <a href="#threshold" name="threshold">#</a> VennDiagram(<i>A</i>, <i>B</i>, <i>AnB</i>).<b>threshold</b>([<i>threshold</i>])
 
-If specified, <i>threshold</i> represents the amount of area that we are willing to sacrifice 
-for convergence from the intersection of the two circles. Otherwise, returns current threshold. Default is 1.0.
+If specified, <i>threshold</i> represents the percentage area that we are willing to sacrifice 
+for convergence from the intersection of the two circles. Otherwise, returns current threshold. Default is 0.00001.

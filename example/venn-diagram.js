@@ -2,7 +2,7 @@ function VennDiagram(A, B, AnB) {
   var width = 720,
       height = 80,
       margin = {top: 0, right: 0, bottom: 0, left: 0},
-      threshold = 1;
+      threshold = 0.00001;
 
   function chart(selection) {
     selection.each(function() {
@@ -12,14 +12,19 @@ function VennDiagram(A, B, AnB) {
 
       var graphic = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-      var diagram = graphic.append("g")
-                .attr("transform", "translate(" + maxRadius() + ", " + maxRadius() + ")");
+      var diagram = graphic.append("g");
 
+      var distance = getDistanceBetweenCircles();
       var circleA = getCircle(A)
                 .attr("class", "A");
       var circleB = getCircle(B)
                 .attr("class", "B")
-                .attr("transform", "translate(" + getDistanceBetweenCircles() + ", 0)");
+                .attr("transform", "translate(" +  distance + ", 0)");
+
+      var xOffset = radius(A) + (width - (radius(A) + distance + radius(B)))/2,
+          yOffset = maxRadius();
+
+      diagram.attr("transform", "translate(" + xOffset  + ", " + yOffset + ")");
 
       function getCircle(cardinality) {
         var g = diagram.append("g");
@@ -75,27 +80,35 @@ function VennDiagram(A, B, AnB) {
   }
 
   function getDistanceBetweenCircles() {
+    if (AnB === 0) {
+      return radius(A) + radius(B);
+    }
+
     var r = Math.min(radius(A), radius(B));
     var R = maxRadius();
     var intersectionArea = AnB * (Math.PI * R * R) / maxCardinality();
 
-    var left = 0,
-        right = (R + r);
+    var minDistance = 0,
+        maxDistance = (R + r);
 
-    while (left <= right) {
-      var distance = left + (right - left)/2;
+    while (minDistance <= maxDistance) {
+      var distance = minDistance + (maxDistance - minDistance)/2;
       var lensArea = getLensArea(r, R, distance)
 
-      if ( Math.abs(intersectionArea - lensArea) < 1 ) {
+      if (hasConverged(intersectionArea, lensArea)) {
         return distance;
       }
 
       if (lensArea < intersectionArea) {
-        right = distance;
+        maxDistance = distance;
       } else {
-        left = distance;
+        minDistance = distance;
       }
     }
+  }
+
+  function hasConverged(intersectionArea, lensArea) {
+    return Math.abs(intersectionArea - lensArea) < (intersectionArea * threshold);
   }
 
   function getLensArea(r, R, d) {
